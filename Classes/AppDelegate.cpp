@@ -1,7 +1,9 @@
 #include "AppDelegate.h"
 #include "HelloWorldScene.h"
+#include "SimpleAudioEngine.h"
 
 USING_NS_CC;
+using namespace CocosDenshion; 
 
 AppDelegate::AppDelegate() {
 
@@ -29,7 +31,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // run
     pDirector->runWithScene(pScene);
-
+	
+    //preload sound effects
+	SimpleAudioEngine::sharedEngine()->preloadEffect( CCFileUtils::sharedFileUtils()->fullPathFromRelativeFile("hit.wav","..") );
     return true;
 }
 
