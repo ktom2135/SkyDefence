@@ -1,54 +1,87 @@
+//
+//  Sky_DefenseAppDelegate.cpp
+//  Sky Defense
+//
+//  Created by Roger Engelbert.
+//  Copyright __MyCompanyName__ 2012. All rights reserved.
+//
+//
+// Background music:
+// Blipotron by Kevin MacLeod (incompetech.com)
+//
+//
+
 #include "AppDelegate.h"
-#include "HelloWorldScene.h"
-#include "SimpleAudioEngine.h"
+
+#include "cocos2d.h"
+#include "GameLayer.h"
 
 USING_NS_CC;
-using namespace CocosDenshion; 
 
-AppDelegate::AppDelegate() {
-
-}
-
-AppDelegate::~AppDelegate() 
+AppDelegate::AppDelegate()
 {
 }
 
-bool AppDelegate::applicationDidFinishLaunching() {
+AppDelegate::~AppDelegate()
+{
+}
+
+bool AppDelegate::applicationDidFinishLaunching()
+{
     // initialize director
     CCDirector* pDirector = CCDirector::sharedDirector();
     CCEGLView* pEGLView = CCEGLView::sharedOpenGLView();
-
+    
     pDirector->setOpenGLView(pEGLView);
-	
+    
+    CCSize screenSize = pEGLView->getFrameSize();
+    //set design size for iPad retina
+    CCSize designSize = CCSize(2048, 1536);
+    
+    CCEGLView::sharedOpenGLView()->setDesignResolutionSize(designSize.width, designSize.height, kResolutionExactFit);
+    
+    pDirector->setContentScaleFactor(screenSize.height/designSize.height);
+    
+    //preload sound effects and background music
+    SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic(CCFileUtils::sharedFileUtils()->fullPathFromRelativeFile("background.mp3",""));
+    SimpleAudioEngine::sharedEngine()->preloadEffect( CCFileUtils::sharedFileUtils()->fullPathFromRelativeFile("bombFail.wav","") );
+    SimpleAudioEngine::sharedEngine()->preloadEffect( CCFileUtils::sharedFileUtils()->fullPathFromRelativeFile("bombRelease.wav","") );
+    SimpleAudioEngine::sharedEngine()->preloadEffect( CCFileUtils::sharedFileUtils()->fullPathFromRelativeFile("boom.wav","") );
+    SimpleAudioEngine::sharedEngine()->preloadEffect( CCFileUtils::sharedFileUtils()->fullPathFromRelativeFile("health.wav","") );
+    SimpleAudioEngine::sharedEngine()->preloadEffect( CCFileUtils::sharedFileUtils()->fullPathFromRelativeFile("fire_truck.wav","") );
+    
+    //lower playback volume for effects
+	SimpleAudioEngine::sharedEngine()->setEffectsVolume(0.4f);
+    
     // turn on display FPS
-    pDirector->setDisplayStats(true);
+    pDirector->setDisplayStats(false);
 
     // set FPS. the default value is 1.0/60 if you don't call this
     pDirector->setAnimationInterval(1.0 / 60);
 
     // create a scene. it's an autorelease object
-    CCScene *pScene = HelloWorld::scene();
+    CCScene *pScene = GameLayer::scene();
 
     // run
     pDirector->runWithScene(pScene);
-	
-    //preload sound effects
-	SimpleAudioEngine::sharedEngine()->preloadEffect( CCFileUtils::sharedFileUtils()->fullPathFromRelativeFile("hit.wav","..") );
+
     return true;
 }
 
 // This function will be called when the app is inactive. When comes a phone call,it's be invoked too
-void AppDelegate::applicationDidEnterBackground() {
-    CCDirector::sharedDirector()->stopAnimation();
+void AppDelegate::applicationDidEnterBackground()
+{
+    CCDirector::sharedDirector()->pause();
 
-    // if you use SimpleAudioEngine, it must be pause
+    // if you use SimpleAudioEngine, it must be paused
     // SimpleAudioEngine::sharedEngine()->pauseBackgroundMusic();
 }
 
 // this function will be called when the app is active again
-void AppDelegate::applicationWillEnterForeground() {
-    CCDirector::sharedDirector()->startAnimation();
-
+void AppDelegate::applicationWillEnterForeground()
+{
+    CCDirector::sharedDirector()->resume();
+    
     // if you use SimpleAudioEngine, it must resume here
     // SimpleAudioEngine::sharedEngine()->resumeBackgroundMusic();
 }

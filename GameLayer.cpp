@@ -67,4 +67,9 @@ void GameLayer::createGameScreen() {
     CCSprite * bg = CCSprite::create("bg.png");
     bg->setPosition(ccp(_screenSize.width * 0.5f, _screenSize.height * 0.5f));
     this->addChild(bg);
+
+	CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFramesWithFile("sprite_sheet.plist");
+	_gameBatchNode = CCSpriteBatchNode::create("sprite_sheet.png");
+	this->addChild(_gameBatchNode);
+
 }
